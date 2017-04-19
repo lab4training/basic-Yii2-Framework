@@ -24,7 +24,7 @@ foreach ($countries as $country){?>
          {
            location.href='index.php?r=country/delete&code=<?PHP echo $country->code;?>'
 
-         };"
+         };">
          <span class='glyphicon glyphicon-trash'></span></a>
        </td>
     </tr>

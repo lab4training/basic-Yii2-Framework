@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 ?>
 
-<h2><?PHP echo $model['name'];?></h2>
+<h2><?PHP echo $model->name;?></h2>
 
 <?= Html::a('Update', ['country/update', 'code' => $model->code],
 ['class' => 'btn btn-primary']) ?>
@@ -16,8 +16,8 @@ use yii\helpers\Html;
        ]) ?>
 <p>
 <ul>
-  <li><?PHP echo Html::encode($model['code']);?></li>
-  <li><?PHP echo Html::encode($model['name']);?></li>
-  <li><?PHP echo Html::encode($model['population']);?></li>
+  <li><?PHP echo Html::encode($model->code);?></li>
+  <li><?PHP echo Html::encode($model->name);?></li>
+  <li><?PHP echo Html::encode($model->population);?></li>
 </ul>
 </p>

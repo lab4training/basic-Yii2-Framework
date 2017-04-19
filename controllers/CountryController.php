@@ -34,7 +34,7 @@ class CountryController extends Controller{
            //select * from country Limit(0,10)
            //select * from country Limit(11,10)
 
-           /* ->all() fa il fetch dei dati (fetchAll(PDO::FETCH_BOTH))traduce l'oggetto $query in una
+           /* ->all() fa il fetch dei dati (fetchAll(PDO::FETCH_OBJECT))traduce l'oggetto $query in una
            matrice di array associativi*/
 
            ->all();
@@ -90,11 +90,15 @@ class CountryController extends Controller{
 
      }
 
+
+
+
      public function actionView($code){
 
        if(isset($code) && is_string($code)){
          $code=addslashes($code);
          $model = $this->findModel($code);
+         //mi ricavo il model relativo al record con il code $code
 
          //Country::find()->where(['code' => $code])->one();
          //la Select
@@ -108,9 +112,10 @@ class CountryController extends Controller{
 
 
      public function actionDelete($code){
-
+       //ci ricaviamo il model
        $arrQuery = $this->findModel($code);
 
+       //cancello il model, quindi il record
        $arrQuery->delete();
        return $this->redirect('index.php?r=country/index');
 
