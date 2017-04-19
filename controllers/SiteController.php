@@ -106,7 +106,8 @@ class SiteController extends Controller
     public function actionContact()
     {
         $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+        if ($model->load(Yii::$app->request->post())
+        && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
@@ -131,18 +132,39 @@ class SiteController extends Controller
         return $this->render('say', ['target'=> $target]);
     }
 
-    public function actionEntry()
-    {
-        $model = new EntryForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+    public function actionEntry(){
 
+        $model=new EntryForm();
+        //istanzio un nuovo model ovvero un oggetto
+      //di classe EntryForm derivato da Model
 
-            return $this->render('entry-confirm', ['model' => $model]);
-        } else {
-            // either the page is initially displayed or there is some validation error
-            return $this->render('entry', ['model' => $model]);
-        }
+      //i dati sono stati postati
+
+      if ($model->load(Yii::$app->request->post())
+     //quando la form ha postato tutti i dati
+         && $model->validate()
+          //e li ha validati secondo le rules
+          //il metodo validate ci consente di validare
+          //tutti i dati presenti nella form,
+          //ovvero Yii::$app->request->post()
+
+      ) {
+        //mostro i dati a video tramite una view
+
+        return $this->render('entry-confirm',
+                ['model' => $model]);
+              }
+              else{
+                //visualizza la form tramite un'altra view
+                return $this->render('entry',
+                          ['model' => $model]);
+
+              }
+
     }
+
+
+
 
 }
