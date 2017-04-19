@@ -1,34 +1,34 @@
 <?php
+
 use yii\helpers\Html;
-use yii\widgets\LinkPager;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\CountrySearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = Yii::t('app', 'Countries');
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1>Countries</h1>
+<div class="country-index">
 
-<?PHP echo Html::a( 'Create Country', ['country/create'],['class' => 'btn btn-success'] );?>
-<p>
-<table width="50%">
-<?php
-foreach ($countries as $country){?>
-    <tr>
-        <td><?= Html::encode("{$country->name}");?><td>
-        <td><a href="index.php?r=country/view&code=<?PHP echo $country->code;?>">
-        <span class='glyphicon glyphicon-eye-open'></span></a>
-        </td>
-        <td>
-        <a href="index.php?r=country/update&code=<?PHP echo $country->code;?>">
-        <span class='glyphicon glyphicon-pencil'></span></a>
-        </td>
-        <td>
-        <a href="javascript:void(0)"
-         onclick="if(confirm('Vuoi veramente cancellare il record?'))
-         {
-           location.href='index.php?r=country/delete&code=<?PHP echo $country->code;?>'
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-         };">
-         <span class='glyphicon glyphicon-trash'></span></a>
-       </td>
-    </tr>
-<?php }?>
-</table>
-</p>
-<?= LinkPager::widget(['pagination' => $pagination]) ?>
+    <p>
+        <?= Html::a(Yii::t('app', 'Create Country'), ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+<?php Pjax::begin(); ?>    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'code',
+            'name',
+            'population',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+<?php Pjax::end(); ?></div>

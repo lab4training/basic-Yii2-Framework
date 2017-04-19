@@ -1,134 +1,124 @@
 <?php
+
 namespace app\controllers;
+
 use Yii;
-use yii\web\Controller;
-use yii\data\Pagination;
 use app\models\Country;
+use app\models\CountrySearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
-//Il controller utilizza il model (la classe Country)
+/**
+ * CountryController implements the CRUD actions for Country model.
+ */
+class CountryController extends Controller
+{
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
-class CountryController extends Controller{
+    /**
+     * Lists all Country models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new CountrySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 
-     public function actionIndex(){
+    /**
+     * Displays a single Country model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
 
-       //eseguiamo una query
-      $query = Country::find(); //la Select
+    /**
+     * Creates a new Country model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new Country();
 
-      //$query è un recordset -- PDOStatement
-
-      //la paginazione
-      $pagination = new Pagination([
-           'defaultPageSize' => 5,//record per pagina
-           'totalCount' => $query->count(), //conteggio record
-       ]);
-
-       //ordinamento e Limit
-
-       $countries = $query->orderBy('name')
-           ->offset($pagination->offset)
-           ->limit($pagination->limit)
-           //offset e Limit sono equivalenti all'istruzione SQL
-           // Limit (n,m)
-
-           //select * from country Limit(0,10)
-           //select * from country Limit(11,10)
-
-           /* ->all() fa il fetch dei dati (fetchAll(PDO::FETCH_OBJECT))traduce l'oggetto $query in una
-           matrice di array associativi*/
-
-           ->all();
-
-           return $this->render('index', [
-            'countries' => $countries,
-            'pagination' => $pagination,
-          ]);
-
-
-
-     }
-
-     public function actionCreate(){
-
-         $model = new Country();
-         if ($model->load(Yii::$app->request->post())
-            && $model->validate())
-
-          {
-            //print_r($model); die();
-            $model->save();
-
-            return $this->redirect(['view', 'code' => $model->code]);
-       }
-          else{
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->code]);
+        } else {
             return $this->render('create', [
-                 'model' => $model,
-                ]);
-          }
+                'model' => $model,
+            ]);
+        }
+    }
 
-     }
+    /**
+     * Updates an existing Country model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
 
-
-     public function actionUpdate($code){
-
-        $model = $this->findModel($code);
-
-        if ($model->load(Yii::$app->request->post())
-            && $model->validate())
-
-          {
-            //print_r($model); die();
-            $model->save();
-
-            return $this->redirect(['view', 'code' => $model->code]);
-       }
-          else{
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->code]);
+        } else {
             return $this->render('update', [
-                 'model' => $model,
-                ]);
-          }
+                'model' => $model,
+            ]);
+        }
+    }
 
-     }
+    /**
+     * Deletes an existing Country model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
 
+        return $this->redirect(['index']);
+    }
 
-
-
-     public function actionView($code){
-
-       if(isset($code) && is_string($code)){
-         $code=addslashes($code);
-         $model = $this->findModel($code);
-         //mi ricavo il model relativo al record con il code $code
-
-         //Country::find()->where(['code' => $code])->one();
-         //la Select
-         return $this->render('view',['model' => $model]);
-
-     } else{
-         return $this->redirect('index.php?r=country');
-      }
-
-     }
-
-
-     public function actionDelete($code){
-       //ci ricaviamo il model
-       $arrQuery = $this->findModel($code);
-
-       //cancello il model, quindi il record
-       $arrQuery->delete();
-       return $this->redirect('index.php?r=country/index');
-
-     }
-
-     public function findModel($code){
-
-       $arrQuery = Country::find()->where(['code' => $code])->one();
-
-       //print_r($arrQuery);die();
-       return $arrQuery;
-
-
-     }
-
+    /**
+     * Finds the Country model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Country the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Country::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
 }
